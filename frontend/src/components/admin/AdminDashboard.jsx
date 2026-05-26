@@ -208,7 +208,7 @@ function StudentDetail({ student, progress, quizzes, submissions, onBack }) {
           {submissions.map((s) => (
             <div key={s.id} className="sub-row">
               <div>Лекція {s.lecture_id} · {new Date(s.submitted_at).toLocaleDateString('uk')}</div>
-              {s.file_name && <a href="#" className="sub-link">{s.file_name}</a>}
+              {s.file_name && <FileLink filePath={s.file_url} fileName={s.file_name} className="sub-link" />}
               {s.figma_url && <a href={s.figma_url} target="_blank" rel="noreferrer" className="sub-link">Figma →</a>}
               {s.comment && <div className="sub-comment">"{s.comment}"</div>}
               <span className={`sub-status ${s.reviewed ? 'reviewed' : 'pending'}`}>
@@ -253,7 +253,7 @@ function SubmissionsPanel({ submissions, students, onMarkReviewed }) {
               <span className="sub-date">{new Date(s.submitted_at).toLocaleDateString('uk')}</span>
             </div>
             <div className="sub-item-files">
-              {s.file_name && <span className="sub-file-tag">📄 {s.file_name}</span>}
+              {s.file_name && <FileLink filePath={s.file_url} fileName={s.file_name} className="sub-file-tag" />}
               {s.figma_url && (
                 <a href={s.figma_url} target="_blank" rel="noreferrer" className="sub-file-tag figma">
                   🎨 Figma
@@ -271,6 +271,33 @@ function SubmissionsPanel({ submissions, students, onMarkReviewed }) {
         );
       })}
     </div>
+  );
+}
+
+/* ── File download link (generates a signed Supabase Storage URL on click) ── */
+function FileLink({ filePath, fileName, className = 'sub-link' }) {
+  const [busy, setBusy] = useState(false);
+
+  async function open() {
+    if (!filePath) return;
+    setBusy(true);
+    try {
+      const { data, error } = await supabase.storage
+        .from('submissions')
+        .createSignedUrl(filePath, 3600); // valid for 1 hour
+      if (error) throw error;
+      window.open(data.signedUrl, '_blank');
+    } catch {
+      alert('Не вдалося отримати посилання на файл');
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  return (
+    <button onClick={open} disabled={busy} className={className} style={{ cursor: busy ? 'wait' : 'pointer' }}>
+      {busy ? '…' : `📄 ${fileName}`}
+    </button>
   );
 }
 
