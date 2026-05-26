@@ -111,7 +111,7 @@ export default function Sidebar({ currentLectureId, onSelectLecture, onHome, mob
                           {isDone ? '✓' : lec.id}
                         </div>
                         <div
-                          className="lec-title"
+                          className="sb-lec-title"
                           dangerouslySetInnerHTML={{ __html: label }}
                         />
                       </button>

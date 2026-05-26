@@ -34,52 +34,52 @@ mark.hl { background: #fef08a; border-radius: 2px; color: #713f12; }
   background: var(--sb); display: flex; flex-direction: column;
   overflow: hidden; flex-shrink: 0;
 }
-.sb-header  { padding: 22px 20px 15px; border-bottom: 1px solid rgba(255,255,255,.06); }
-.sb-eyebrow { font-size: 9px; letter-spacing: .15em; text-transform: uppercase; color: rgba(255,255,255,.2); margin-bottom: 7px; }
-.sb-course-name { font-family: "Fraunces", serif; font-size: 14px; font-weight: 500; color: #fff; line-height: 1.4; margin-bottom: 13px; }
+.sb-header  { padding: 24px 20px 18px; border-bottom: 1px solid rgba(255,255,255,.06); }
+.sb-eyebrow { font-size: 9px; letter-spacing: .15em; text-transform: uppercase; color: rgba(255,255,255,.2); margin-bottom: 9px; }
+.sb-course-name { font-family: "Fraunces", serif; font-size: 20px; font-weight: 600; color: #fff; line-height: 1.3; margin-bottom: 18px; }
 
 /* Progress ring */
-.progress-row       { display: flex; align-items: center; gap: 9px; }
-.progress-ring-wrap { position: relative; width: 34px; height: 34px; flex-shrink: 0; }
-.progress-svg       { width: 34px; height: 34px; transform: rotate(-90deg); }
+.progress-row       { display: flex; align-items: center; gap: 12px; }
+.progress-ring-wrap { position: relative; width: 44px; height: 44px; flex-shrink: 0; }
+.progress-svg       { width: 44px; height: 44px; transform: rotate(-90deg); }
 .ring-bg  { fill: none; stroke: rgba(255,255,255,.07); stroke-width: 2.5; }
 .ring-fg  { fill: none; stroke-width: 2.5; stroke-linecap: round; transition: stroke-dashoffset .5s, stroke .3s; }
-.ring-pct { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-size: 8px; font-weight: 500; color: rgba(255,255,255,.55); }
-.progress-info      { font-size: 10px; color: rgba(255,255,255,.28); line-height: 1.5; }
-.progress-info b    { display: block; color: rgba(255,255,255,.68); font-weight: 400; font-size: 11px; }
+.ring-pct { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 500; color: rgba(255,255,255,.72); }
+.progress-info      { font-size: 12px; color: rgba(255,255,255,.42); line-height: 1.5; }
+.progress-info b    { display: block; color: rgba(255,255,255,.82); font-weight: 500; font-size: 13px; }
 
 /* Search */
-.sb-search       { padding: 10px 14px; border-bottom: 1px solid rgba(255,255,255,.06); position: relative; }
-.sb-search-icon  { position: absolute; left: 22px; top: 50%; transform: translateY(-50%); font-size: 11px; color: rgba(255,255,255,.3); pointer-events: none; }
-.sb-search-input { width: 100%; background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.1); border-radius: 8px; padding: 7px 10px 7px 30px; font-size: 11px; color: rgba(255,255,255,.8); font-family: inherit; outline: none; transition: border-color .15s; }
+.sb-search       { padding: 12px 16px; border-bottom: 1px solid rgba(255,255,255,.06); position: relative; }
+.sb-search-icon  { position: absolute; left: 28px; top: 50%; transform: translateY(-50%); font-size: 12px; color: rgba(255,255,255,.3); pointer-events: none; }
+.sb-search-input { width: 100%; background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.1); border-radius: 99px; padding: 9px 16px 9px 38px; font-size: 12px; color: rgba(255,255,255,.8); font-family: inherit; outline: none; transition: border-color .15s; }
 .sb-search-input::placeholder { color: rgba(255,255,255,.3); }
 .sb-search-input:focus { border-color: rgba(255,255,255,.25); }
 
 /* Module + lecture buttons */
-.sb-scroll { flex: 1; overflow-y: auto; padding: 8px 0; scrollbar-width: thin; scrollbar-color: rgba(255,255,255,.07) transparent; }
-.module-btn { display: flex; align-items: center; gap: 8px; padding: 7px 15px 7px 12px; width: 100%; transition: background .15s; }
+.sb-scroll { flex: 1; overflow-y: auto; padding: 10px 0; scrollbar-width: thin; scrollbar-color: rgba(255,255,255,.07) transparent; }
+.module-btn { display: flex; align-items: center; gap: 9px; padding: 9px 16px 9px 14px; width: 100%; transition: background .15s; }
 .module-btn:hover { background: rgba(255,255,255,.04); }
 .module-btn.open  { background: rgba(255,255,255,.06); }
-.module-dot  { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
-.module-name { font-size: 11px; color: rgba(255,255,255,.36); flex: 1; line-height: 1.3; text-align: left; transition: color .15s; }
-.module-btn.open .module-name { color: rgba(255,255,255,.82); }
-.module-count { font-size: 9px; color: rgba(255,255,255,.16); }
+.module-dot  { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+.module-name { font-size: 13px; color: rgba(255,255,255,.45); flex: 1; line-height: 1.3; text-align: left; transition: color .15s; }
+.module-btn.open .module-name { color: rgba(255,255,255,.88); }
+.module-count { font-size: 11px; color: rgba(255,255,255,.22); }
 .lecture-list { display: block; }
-.lecture-btn  { display: flex; align-items: center; gap: 7px; padding: 4px 15px 4px 28px; width: 100%; transition: background .12s; }
+.lecture-btn  { display: flex; align-items: flex-start; gap: 9px; padding: 6px 14px 6px 26px; width: 100%; transition: background .12s; }
 .lecture-btn:hover    { background: rgba(255,255,255,.03); }
-.lecture-btn.current  { background: rgba(255,255,255,.06); }
-.lec-num  { width: 17px; height: 17px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 9px; font-weight: 500; flex-shrink: 0; background: rgba(255,255,255,.05); color: rgba(255,255,255,.27); transition: all .15s; }
+.lecture-btn.current  { background: rgba(255,255,255,.07); }
+.lec-num  { width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 500; flex-shrink: 0; background: rgba(255,255,255,.05); color: rgba(255,255,255,.32); transition: all .15s; margin-top: 1px; }
 .lecture-btn.done .lec-num { background: #34d399; color: #071a0f; }
-.lec-title { font-size: 10.5px; color: rgba(255,255,255,.25); line-height: 1.35; flex: 1; text-align: left; transition: color .15s; }
-.lecture-btn.current .lec-title { color: rgba(255,255,255,.8); }
-.lecture-btn.done .lec-title    { color: rgba(255,255,255,.33); }
-.sb-no-results { padding: 12px 16px; font-size: 11px; color: rgba(255,255,255,.3); text-align: center; }
+.sb-lec-title { font-size: 11.5px; color: rgba(255,255,255,.35); line-height: 1.4; flex: 1; text-align: left; transition: color .15s; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.lecture-btn.current .sb-lec-title { color: rgba(255,255,255,.88); }
+.lecture-btn.done .sb-lec-title    { color: rgba(255,255,255,.38); }
+.sb-no-results { padding: 12px 16px; font-size: 12px; color: rgba(255,255,255,.3); text-align: center; }
 
 /* Footer */
-.sb-footer   { padding: 11px 16px; border-top: 1px solid rgba(255,255,255,.06); display: flex; align-items: center; gap: 8px; }
-.sb-avatar   { width: 26px; height: 26px; border-radius: 50%; background: linear-gradient(135deg,#8b7cf8,#60a5fa); display: flex; align-items: center; justify-content: center; font-size: 10px; color: #fff; font-weight: 500; flex-shrink: 0; }
-.sb-user-info { flex: 1; font-size: 10px; color: rgba(255,255,255,.27); line-height: 1.4; }
-.sb-user-info b { display: block; color: rgba(255,255,255,.55); font-weight: 400; }
+.sb-footer   { padding: 13px 16px; border-top: 1px solid rgba(255,255,255,.06); display: flex; align-items: center; gap: 9px; }
+.sb-avatar   { width: 30px; height: 30px; border-radius: 50%; background: linear-gradient(135deg,#8b7cf8,#60a5fa); display: flex; align-items: center; justify-content: center; font-size: 12px; color: #fff; font-weight: 500; flex-shrink: 0; }
+.sb-user-info { flex: 1; font-size: 11px; color: rgba(255,255,255,.32); line-height: 1.4; }
+.sb-user-info b { display: block; color: rgba(255,255,255,.65); font-weight: 500; font-size: 12px; }
 .admin-badge { display: inline-block; font-size: 8px; background: #8b7cf8; color: #fff; padding: 1px 5px; border-radius: 99px; margin-left: 4px; }
 .sb-signout  { font-size: 14px; color: rgba(255,255,255,.25); padding: 4px; transition: color .15s; }
 .sb-signout:hover { color: rgba(255,255,255,.6); }
