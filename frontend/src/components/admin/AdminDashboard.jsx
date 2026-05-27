@@ -78,6 +78,7 @@ export default function AdminDashboard() {
           </button>
         </div>
         <button className="export-btn" onClick={exportCSV}>⬇ CSV</button>
+        <a href="/" className="export-btn" style={{ textDecoration: 'none' }}>← До курсу</a>
       </div>
 
       {tab === 'cohort' && (
@@ -166,7 +167,24 @@ function CohortTable({ students, progress, onSelect }) {
 
 /* ── Student Detail ───────────────────────────────────── */
 function StudentDetail({ student, progress, quizzes, submissions, onBack }) {
+  const [expandedMods, setExpandedMods] = useState({});
   const doneIds = new Set(progress.map((p) => p.lecture_id));
+
+  // Build per-lecture quiz best scores from quiz_attempts (module_id >= 1000)
+  const lecQuizMap = {};
+  quizzes.forEach((q) => {
+    if (q.module_id >= 1000) {
+      const lid = q.module_id - 1000;
+      if (!lecQuizMap[lid] || q.score > lecQuizMap[lid].score) lecQuizMap[lid] = q;
+    }
+  });
+
+  function toggleMod(modId) {
+    setExpandedMods((prev) => ({ ...prev, [modId]: !prev[modId] }));
+  }
+
+  const totalDone = doneIds.size;
+  const totalPct  = Math.round((totalDone / lectures.length) * 100);
 
   return (
     <div className="student-detail">
@@ -178,26 +196,55 @@ function StudentDetail({ student, progress, quizzes, submissions, onBack }) {
           <div className="student-email">{student.email}</div>
           <div className="student-joined">З {new Date(student.created_at).toLocaleDateString('uk')}</div>
         </div>
+        <div className="sd-total-badge" style={{ marginLeft: 'auto' }}>
+          <span className="sd-total-num">{totalPct}%</span>
+          <span className="sd-total-label">{totalDone} / {lectures.length} лекцій</span>
+        </div>
       </div>
 
       {modules.map((mod) => {
         const modLecs  = lectures.filter((l) => l.moduleId === mod.id);
         const modDone  = modLecs.filter((l) => doneIds.has(l.id)).length;
-        const quiz     = quizzes.find((q) => q.module_id === mod.id);
+        const modPct   = Math.round((modDone / modLecs.length) * 100);
+        const modQuiz  = quizzes.find((q) => q.module_id === mod.id);
+        const isOpen   = !!expandedMods[mod.id];
+
         return (
           <div key={mod.id} className="module-progress-row">
-            <div className="mp-header">
+            <button className="mp-header mp-header-btn" onClick={() => toggleMod(mod.id)}>
               <div className="module-dot" style={{ background: mod.color }} />
               <span className="mp-name">{mod.name}</span>
               <span className="mp-count">{modDone}/{modLecs.length}</span>
-              {quiz && <span className="mp-quiz">Тест: {quiz.score}/{quiz.total}</span>}
-            </div>
+              {modQuiz && (
+                <span className="mp-quiz">Тест: {modQuiz.score}/{modQuiz.total}</span>
+              )}
+              <span className="mp-chevron">{isOpen ? '▲' : '▼'}</span>
+            </button>
             <div className="mp-bar-track">
               <div
                 className="mp-bar-fill"
-                style={{ width: (modDone / modLecs.length * 100) + '%', background: mod.color }}
+                style={{ width: modPct + '%', background: mod.color }}
               />
             </div>
+
+            {isOpen && (
+              <div className="mp-lec-list">
+                {modLecs.map((lec) => {
+                  const isDone  = doneIds.has(lec.id);
+                  const lecQuiz = lecQuizMap[lec.id];
+                  return (
+                    <div key={lec.id} className={`mp-lec-item${isDone ? ' done' : ''}`}>
+                      <span className="mp-lec-check">{isDone ? '✓' : '○'}</span>
+                      <span className="mp-lec-num">{lec.id}.</span>
+                      <span className="mp-lec-name">{lec.title}</span>
+                      {lecQuiz && (
+                        <span className="mp-lec-quiz">{lecQuiz.score}/{lecQuiz.total}</span>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            )}
           </div>
         );
       })}
