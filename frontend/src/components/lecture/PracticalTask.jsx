@@ -5,7 +5,7 @@ import courseData from '../../data/course.json';
 
 const SPACES = courseData.spaces;
 
-export default function PracticalTask({ task, lecture, accentColor, bgColor, textColor }) {
+export default function PracticalTask({ task, lecture, accentColor, bgColor, textColor, onSubmitted }) {
   if (!task) return null;
 
   const space = SPACES[lecture.space] || SPACES.chat;
@@ -42,17 +42,19 @@ export default function PracticalTask({ task, lecture, accentColor, bgColor, tex
         </div>
       </div>
 
-      {lecture.submittable && <SubmissionBlock lecture={lecture} accentColor={accentColor} />}
+      {lecture.submittable && (
+        <SubmissionBlock lecture={lecture} accentColor={accentColor} onSubmitted={onSubmitted} />
+      )}
     </section>
   );
 }
 
-function SubmissionBlock({ lecture, accentColor }) {
+function SubmissionBlock({ lecture, accentColor, onSubmitted }) {
   const { user } = useAuth();
-  const [file, setFile]       = useState(null);
+  const [file, setFile]         = useState(null);
   const [figmaUrl, setFigmaUrl] = useState('');
-  const [comment, setComment] = useState('');
-  const [status, setStatus]   = useState('idle'); // idle | uploading | done | error
+  const [comment, setComment]   = useState('');
+  const [status, setStatus]     = useState('idle'); // idle | uploading | done | error
   const [existing, setExisting] = useState(null);
 
   useState(() => {
@@ -63,7 +65,12 @@ function SubmissionBlock({ lecture, accentColor }) {
       .eq('user_id', user.id)
       .eq('lecture_id', lecture.id)
       .maybeSingle()
-      .then(({ data }) => { if (data) setExisting(data); });
+      .then(({ data }) => {
+        if (data) {
+          setExisting(data);
+          onSubmitted?.(); // existing submission already satisfies the gate
+        }
+      });
   }, [user, lecture.id]);
 
   async function submit() {
@@ -94,7 +101,9 @@ function SubmissionBlock({ lecture, accentColor }) {
       });
       if (error) throw error;
       setStatus('done');
-      setExisting({ file_url, file_name, figma_url: figmaUrl, comment, reviewed: false });
+      const sub = { file_url, file_name, figma_url: figmaUrl, comment, reviewed: false };
+      setExisting(sub);
+      onSubmitted?.(); // unlock nav buttons
     } catch {
       setStatus('error');
     }

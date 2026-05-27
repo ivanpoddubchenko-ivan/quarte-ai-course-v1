@@ -1,4 +1,6 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { supabase } from '../../lib/supabase';
+import { useAuth } from '../../hooks/useAuth';
 import { useProgress } from '../../hooks/useProgress';
 import ConceptsGrid from '../lecture/ConceptsGrid';
 import BadGoodExample from '../lecture/BadGoodExample';
@@ -12,22 +14,47 @@ import courseData from '../../data/course.json';
 const { modules, lectures } = courseData;
 
 export default function LecturePage({ lectureId, onNavigate }) {
+  const { user } = useAuth();
   const { done, lecQuizScores, toggleDone, saveLectureQuiz } = useProgress();
   const [quizOpen, setQuizOpen] = useState(false);
+  const [taskSubmitted, setTaskSubmitted] = useState(false);
 
-  const lec     = lectures.find((l) => l.id === lectureId);
-  const mod     = modules[lec?.moduleId ?? 0];
-  const allIds  = lectures.map((l) => l.id);
-  const idx     = allIds.indexOf(lectureId);
-  const prevId  = idx > 0 ? allIds[idx - 1] : null;
-  const nextId  = idx < allIds.length - 1 ? allIds[idx + 1] : null;
-  const isDone       = done.has(lectureId);
+  const lec    = lectures.find((l) => l.id === lectureId);
+  const mod    = modules[lec?.moduleId ?? 0];
+  const allIds = lectures.map((l) => l.id);
+  const idx    = allIds.indexOf(lectureId);
+  const prevId = idx > 0 ? allIds[idx - 1] : null;
+  const nextId = idx < allIds.length - 1 ? allIds[idx + 1] : null;
+  const isDone = done.has(lectureId);
+
+  // For submittable lectures — check if student already submitted (component remounts per lecture via key=)
+  useEffect(() => {
+    if (!lec?.submittable || !user) return;
+    supabase
+      .from('submissions')
+      .select('id')
+      .eq('user_id', user.id)
+      .eq('lecture_id', lectureId)
+      .maybeSingle()
+      .then(({ data }) => { if (data) setTaskSubmitted(true); });
+  }, [lec?.submittable, user, lectureId]);
 
   if (!lec || !mod) return null;
 
   const c            = lec.content;
   const lecQuiz      = c.quiz;                       // per-lecture quiz from course.json
   const lecQuizScore = lecQuizScores?.[lectureId];   // best score for this lecture
+
+  // Gate: quiz must be done; if submittable, submission is also required
+  const quizRequired   = !!lecQuiz && !lecQuizScore;
+  const submitRequired = !!lec.submittable && !taskSubmitted;
+  const taskLocked     = quizRequired || submitRequired;
+
+  const lockHint = submitRequired && quizRequired
+    ? 'Спочатку здай завдання та пройди тест'
+    : submitRequired
+      ? 'Спочатку здай практичне завдання'
+      : 'Спочатку пройди тест до цієї лекції';
 
   return (
     <div className="lecture-page">
@@ -64,6 +91,7 @@ export default function LecturePage({ lectureId, onNavigate }) {
         accentColor={mod.color}
         bgColor={mod.bgColor}
         textColor={mod.textColor}
+        onSubmitted={() => setTaskSubmitted(true)}
       />
 
       {/* Per-lecture quiz trigger */}
@@ -90,13 +118,25 @@ export default function LecturePage({ lectureId, onNavigate }) {
         <button
           className={`done-btn${isDone ? ' is-done' : ''}`}
           onClick={() => toggleDone(lectureId)}
+          disabled={taskLocked && !isDone}
+          title={taskLocked && !isDone ? lockHint : undefined}
         >
           {isDone ? '↩ Скасувати' : '✓ Виконано'}
         </button>
-        <button className="nav-btn" onClick={() => nextId && onNavigate(nextId)} disabled={!nextId}>
+        <button
+          className="nav-btn"
+          onClick={() => nextId && onNavigate(nextId)}
+          disabled={!nextId || taskLocked}
+          title={taskLocked && nextId ? lockHint : undefined}
+        >
           Наступна →
         </button>
       </div>
+
+      {/* Lock hint shown below nav when task is not yet complete */}
+      {taskLocked && (
+        <p className="task-lock-hint">🔒 {lockHint}</p>
+      )}
 
       {/* Quiz modal */}
       {quizOpen && lecQuiz && (
