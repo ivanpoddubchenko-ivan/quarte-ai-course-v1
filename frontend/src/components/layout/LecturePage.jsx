@@ -12,7 +12,7 @@ import courseData from '../../data/course.json';
 const { modules, lectures } = courseData;
 
 export default function LecturePage({ lectureId, onNavigate }) {
-  const { done, quizScores, toggleDone, saveQuiz } = useProgress();
+  const { done, lecQuizScores, toggleDone, saveLectureQuiz } = useProgress();
   const [quizOpen, setQuizOpen] = useState(false);
 
   const lec     = lectures.find((l) => l.id === lectureId);
@@ -21,10 +21,9 @@ export default function LecturePage({ lectureId, onNavigate }) {
   const idx     = allIds.indexOf(lectureId);
   const prevId  = idx > 0 ? allIds[idx - 1] : null;
   const nextId  = idx < allIds.length - 1 ? allIds[idx + 1] : null;
-  const isDone  = done.has(lectureId);
-  const quizScore = quizScores[mod?.id];
-  const modLecs = lectures.filter((l) => l.moduleId === mod?.id);
-  const isLastInModule = modLecs[modLecs.length - 1]?.id === lectureId;
+  const isDone      = done.has(lectureId);
+  const lecQuiz     = c.quiz;                        // per-lecture quiz from course.json
+  const lecQuizScore = lecQuizScores?.[lectureId];   // best score for this lecture
 
   if (!lec || !mod) return null;
 
@@ -67,8 +66,8 @@ export default function LecturePage({ lectureId, onNavigate }) {
         textColor={mod.textColor}
       />
 
-      {/* Quiz trigger — only on the last lecture of the module (or if already completed, always show to allow retakes) */}
-      {mod.quiz && (isLastInModule || quizScore) && (
+      {/* Per-lecture quiz trigger */}
+      {lecQuiz && (
         <div className="quiz-trigger">
           <button
             className="quiz-trigger-btn"
@@ -76,9 +75,9 @@ export default function LecturePage({ lectureId, onNavigate }) {
             onClick={() => setQuizOpen(true)}
           >
             ▶{' '}
-            {quizScore
-              ? `Повторити тест (${quizScore.score}/${quizScore.total})`
-              : `Пройти тест модуля — ${mod.quiz.qs.length} запитань`}
+            {lecQuizScore
+              ? `Повторити тест (${lecQuizScore.score}/${lecQuizScore.total})`
+              : `Пройти тест — ${lecQuiz.qs.length} запитання`}
           </button>
         </div>
       )}
@@ -100,12 +99,12 @@ export default function LecturePage({ lectureId, onNavigate }) {
       </div>
 
       {/* Quiz modal */}
-      {quizOpen && (
+      {quizOpen && lecQuiz && (
         <QuizModal
-          quiz={mod.quiz}
+          quiz={lecQuiz}
           moduleColor={mod.color}
           onClose={() => setQuizOpen(false)}
-          onSave={(score, total) => saveQuiz(mod.id, score, total)}
+          onSave={(score, total) => saveLectureQuiz(lectureId, score, total)}
         />
       )}
     </div>
