@@ -105,6 +105,7 @@ function CourseAppInner() {
         )}
         {view === 'lecture' && currentLectureId && (
           <LecturePage
+            key={currentLectureId}
             lectureId={currentLectureId}
             onNavigate={openLecture}
           />

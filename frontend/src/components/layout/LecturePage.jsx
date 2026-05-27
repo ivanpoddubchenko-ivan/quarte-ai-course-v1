@@ -23,6 +23,8 @@ export default function LecturePage({ lectureId, onNavigate }) {
   const nextId  = idx < allIds.length - 1 ? allIds[idx + 1] : null;
   const isDone  = done.has(lectureId);
   const quizScore = quizScores[mod?.id];
+  const modLecs = lectures.filter((l) => l.moduleId === mod?.id);
+  const isLastInModule = modLecs[modLecs.length - 1]?.id === lectureId;
 
   if (!lec || !mod) return null;
 
@@ -65,8 +67,8 @@ export default function LecturePage({ lectureId, onNavigate }) {
         textColor={mod.textColor}
       />
 
-      {/* Quiz trigger */}
-      {mod.quiz && (
+      {/* Quiz trigger — only on the last lecture of the module (or if already completed, always show to allow retakes) */}
+      {mod.quiz && (isLastInModule || quizScore) && (
         <div className="quiz-trigger">
           <button
             className="quiz-trigger-btn"
