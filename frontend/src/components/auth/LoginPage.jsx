@@ -6,7 +6,7 @@ export default function LoginPage() {
   return (
     <div className="login-root">
       <div className="login-card">
-        <div className="login-eyebrow">AI Course · Inverita · v3.0</div>
+        <div className="login-eyebrow">AI Course · QUARTE · v1.0</div>
         <h1 className="login-title">
           AI-стек що<br /><em>змінює</em> як ти<br />створюєш продукти
         </h1>
