@@ -21,13 +21,13 @@ export default function LecturePage({ lectureId, onNavigate }) {
   const idx     = allIds.indexOf(lectureId);
   const prevId  = idx > 0 ? allIds[idx - 1] : null;
   const nextId  = idx < allIds.length - 1 ? allIds[idx + 1] : null;
-  const isDone      = done.has(lectureId);
-  const lecQuiz     = c.quiz;                        // per-lecture quiz from course.json
-  const lecQuizScore = lecQuizScores?.[lectureId];   // best score for this lecture
+  const isDone       = done.has(lectureId);
 
   if (!lec || !mod) return null;
 
-  const c = lec.content;
+  const c            = lec.content;
+  const lecQuiz      = c.quiz;                       // per-lecture quiz from course.json
+  const lecQuizScore = lecQuizScores?.[lectureId];   // best score for this lecture
 
   return (
     <div className="lecture-page">
